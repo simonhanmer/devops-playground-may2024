@@ -32,3 +32,4 @@ Walking you through today's workshop is [Simon Hanmer](https://www.linkedin.com/
 
 
 
+If you're joining us live, please proceed to [step 1a](./step_1a/README.md), otherwise [step 1b](./step_1b/README.md).
