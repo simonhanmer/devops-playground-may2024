@@ -175,7 +175,7 @@ rerun this command to reinitialize your working directory. If you forget, other
 commands will detect it and remind you to do so if necessary.
 ```
 
-![Warning Symbol](/images/small_warning.png) If this or any following commands doesn't work, and you're in the live session, please ask for help. If you're doing this at home, please check the Terraform documentation.
+:warning:(/images/small_warning.png) If this or any following commands doesn't work, and you're in the live session, please ask for help. If you're doing this at home, please check the Terraform documentation.
 
 
 Now that we've initialised our project, we can check our code is valid Terraform. We can do this by running `terraform validate`. This should output `Success! The configuration is valid`. 
