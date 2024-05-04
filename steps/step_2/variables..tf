@@ -23,7 +23,3 @@ variable "panda_name" {
 locals {
   url       = "${var.panda_name}.${var.domain}"
 }
-
-data "aws_route53_zone" "this" {
-  name = "${var.domain}."
-}
