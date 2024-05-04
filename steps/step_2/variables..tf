@@ -5,13 +5,6 @@ variable "aws_region" {
 }
 
 
-variable "create_hosted_zone" {
-  type        = bool
-  description = "Whether to create a hosted zone for the domain"
-  default     = false
-}
-
-
 variable "domain" {
   type        = string
   description = "The domain name to use for the application"
