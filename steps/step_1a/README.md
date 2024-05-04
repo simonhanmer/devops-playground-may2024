@@ -20,5 +20,5 @@ If any of the above is not working, please let us know - just shout out in the o
 
 
 ---
-Now, please proceed to [step 2](../step2/README.md), or
+Now, please proceed to [step 2](../step_2/README.md), or
 Back to the main [README](../../README.md) file

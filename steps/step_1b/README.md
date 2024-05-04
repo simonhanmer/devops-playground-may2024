@@ -14,5 +14,5 @@ To follow along, you'll need the following:
 If you're not familiar with Terraform, AWS CLI or Hugo, we recommend you take a look at the documentation for each before proceeding.
 
 ---
-Now, please proceed to [step 2](../step2/README.md), or
+Now, please proceed to [step 2](../step_2/README.md), or
 Back to the main [README](../../README.md) file

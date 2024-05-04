@@ -38,7 +38,7 @@ Next, we need to create a file to hold our S3 bucket. We'll call this file `s3.t
 ```hcl
 ```
 
-```hcl
+
 
 ---
 Now, please proceed to [step 3](../step3/README.md), or
