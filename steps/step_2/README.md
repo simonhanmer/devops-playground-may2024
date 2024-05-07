@@ -138,10 +138,6 @@ output "bucket_s3_name" {
 ```
 This file will output the website endpoint and the S3 bucket name.
 
----
-Now, please proceed to [step 3](../step3/README.md), or
-Back to the main [README](../../README.md) file
-
 ## Deploying our terraform
 We've now got our starting terraform files, so we can get ready to deploy them.
 
@@ -180,7 +176,9 @@ commands will detect it and remind you to do so if necessary.
 
 Now that we've initialised our project, we can check our code is valid Terraform. We can do this by running `terraform validate`. This should output `Success! The configuration is valid`. 
 
-Finally, we can deploy our infrastructure by running `terraform apply`. If you just run `terraform apply`, it is going to ask you to enter the name of your panda role - this is because while we have a variable for it, we haven't set a default value. You can either enter a name, or you can set a default value in your `variables.tf` file.
+Finally, we can deploy our infrastructure by running `terraform apply`. If you just run `terraform apply`, it is going to ask you to enter the name of your panda 
+role - this is because while we have a variable for it, we haven't set a default value. You can either enter a name, or you can set a default value in your 
+`variables.tf` file.
 ```hcl
 panda_name = "your-panda-name"
 ```
@@ -206,3 +204,7 @@ Now that we've deployed our infrastructure, we can create a simple web page to t
   `aws s3 cp index.html s3://your-panda-name.devopsplayground.co.uk/index.html`, replacing the s3 value with the value output by Terraform.
 
   You can now open the website endpoint listed in the outputs in your browser, and you should see the web page you just created.
+
+---
+Now, please proceed to [step 3](../step_3/README.md), or
+back to the main [README](../../README.md) file

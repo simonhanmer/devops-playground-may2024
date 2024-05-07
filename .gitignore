@@ -3,3 +3,5 @@
 *tfvars
 *hcl
 *.txt
+terraform/
+.DS_Store

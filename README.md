@@ -33,3 +33,14 @@ Walking you through today's workshop is [Simon Hanmer](https://www.linkedin.com/
 
 
 If you're joining us live, please proceed to [step 1a](./steps/step_1a/README.md), otherwise [step 1b](./steps/step_1b/README.md).
+
+The workshop consists of the following steps:
+
+1. Setups
+    a. [step_1a](./steps/step_1a/) - for those joining us live
+    a. [step_1b](./steps/step_1b/) - for those trying this at their own pace
+2. [step_2](./steps/step_2/) - Create a Terraform project, and deploy storage for our site
+3. [step_3](./steps/step_3/) - Generating an SSL certificate to make our site secure
+4. [step_4](./steps/step_4/) - Create a CloudFront distribution to share our site with the world
+
+Each step contains a README.md file that will guide you through the process, along with the Terraform files you'll need to complete the step.
