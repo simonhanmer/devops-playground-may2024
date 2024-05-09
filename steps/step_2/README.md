@@ -26,19 +26,20 @@ variable "domain" {
 variable "panda_name" {
   type        = string
   description = "The name of your panda"
+  default     = "strange-panda"
 }
 
 
 # ----------------------------------------------------------------------------
 # Locals below are used to create the URL for the application
 locals {
-  url       = "${var.panda_name}.${var.domain}"
+  url = "${var.panda_name}.${var.domain}"
 }
 
 ```
 We'll provide a copy of each file in the appropriate step folder, in this case [variables.tf](./variables.tf). This file tells Terraform about some values that
 we'll be using in our infrastructure. We've defined the region we'll be deploying to, the domain name we'll be using, and the name of our panda. We've also
-defined a local variable to hold the URL of our application.
+defined a local variable to build the URL of our application based on the domain and panda name.
 
 
 ## Create a provider file
@@ -73,7 +74,7 @@ deploying to AWS, specifies our version and region preferences, and sets a defau
 Next, we need to create a file to hold our S3 bucket. We'll call this file `s3.tf`. First, let's create the bucket:
 ```hcl
 resource "aws_s3_bucket" "this" {
-  bucket = local.url
+  bucket        = local.url
   force_destroy = true
 }
 ```
@@ -84,7 +85,7 @@ destroy the bucket even if it's not empty. This is useful for our purposes, but 
 Next, we're going to setup some permissions around the bucket. Note that we'll tie these down shortly, but for now we'll just allow all access to the bucket:
 ```hcl
 resource "aws_s3_bucket_public_access_block" "this" {
-  bucket = aws_s3_bucket.this.id
+  bucket                  = aws_s3_bucket.this.id
   block_public_acls       = false
   block_public_policy     = false
   ignore_public_acls      = false
@@ -97,14 +98,14 @@ resource "aws_s3_bucket_policy" "this" {
     Version = "2012-10-17",
     Statement = [
       {
-        Effect = "Allow",
+        Effect    = "Allow",
         Principal = "*",
-        Action = "s3:GetObject",
-        Resource = "${aws_s3_bucket.this.arn}/*"
+        Action    = "s3:GetObject",
+        Resource  = "${aws_s3_bucket.this.arn}/*"
       }
     ]
   })
-  depends_on = [ aws_s3_bucket_public_access_block.this ]
+  depends_on = [aws_s3_bucket_public_access_block.this]
 }
 ```
 We're setting up a public access block to allow public access to the bucket. We're also setting up a bucket policy to allow anyone to read objects from the bucket.
@@ -115,13 +116,14 @@ resource "aws_s3_bucket_website_configuration" "this" {
   bucket = aws_s3_bucket.this.id
 
   index_document {
-  suffix = "index.html"
+    suffix = "index.html"
   }
 
   error_document {
-  key = "error.html"
+    key = "error.html"
   }
 }
+
 ```
 You can find a copy of this file in the appropriate step folder, in this case [s3.tf](./s3.tf).
 
@@ -198,6 +200,7 @@ Now that we've deployed our infrastructure, we can create a simple web page to t
     <h1>Welcome to the DevOps Playground</h1>
     <p>This is a test page for our DevOps Playground</p>
   </body>
+</html>
   ```
 
   Let's copy that to our S3 bucket. We can do this by running the following command:
