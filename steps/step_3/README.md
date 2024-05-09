@@ -36,10 +36,31 @@ For simplicity, we're going to use option 1 - we've already registered our domai
 which created a hosted zone for us. We'll use this hosted zone to automatically verify our certificate.
 
 ## Creating a certificate in ACM
-To create a certificate in ACM, we need to provide the url we want to secure. Create a file called `acm.tf` 
-in your terraform folder, and add the following code:
+We're going to create a certifcate in ACM using Terraform. Because we're going to add this to a CloudFront distribution,
+this needs to exist in the `us-east-1` region. However, our Terraform provider already has a region (depending on when you
+walk through the workshop, it's likely to be pointing to `eu-west-1` or `eu-west-2`.)
+
+To do this, we'll add a new provider to our Terraform, pointing to `us-east-1`, and then add an alias so we can reference
+the 2nd region. Add the following code to your `provider.tf` file:
+```hcl
+provider "aws" {
+  region = "us-east-1"
+
+  default_tags {
+    tags = {
+      project = "devops-playground-may-2024"
+    }
+  }
+
+  alias = "us-east-1"
+}
+```
+
+We can then reference this alias as we create a certificate in ACM. To do this, we need to provide the url we want to secure. 
+Create a file called `acm.tf` in your terraform folder, and add the following code:
 ```hcl
 resource "aws_acm_certificate" "this" {
+  provider          = aws.us-east-1
   domain_name       = local.url
   validation_method = "DNS"
   lifecycle {
@@ -62,7 +83,7 @@ we'll need that when we want to create our DNS record for validation.
 To do this, we'll query Route53 and find our hosted zone. To do this, add this code to the `acm.tf` file:
 ```hcl
 data "aws_route53_zone" "this" {
-  name = local.url
+  name = var.domain
 }
 ```
 
@@ -73,7 +94,7 @@ resource "aws_route53_record" "this" {
   zone_id = data.aws_route53_zone.this.zone_id
   name    = tolist(aws_acm_certificate.this.domain_validation_options)[0].resource_record_name
   type    = tolist(aws_acm_certificate.this.domain_validation_options)[0].resource_record_type
-  records = tolist(aws_acm_certificate.this.domain_validation_options)[0].resource_record_value
+  records = [tolist(aws_acm_certificate.this.domain_validation_options)[0].resource_record_value]
   ttl     = 60
 }
 ```
