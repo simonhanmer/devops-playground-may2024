@@ -19,7 +19,7 @@ variable "aws_region" {
 variable "domain" {
   type        = string
   description = "The domain name to use for the application"
-  default     = "devopsplayground.co.uk"
+  default     = "devopsplayground.org"
 }
 
 
@@ -204,7 +204,7 @@ Now that we've deployed our infrastructure, we can create a simple web page to t
   ```
 
   Let's copy that to our S3 bucket. We can do this by running the following command:
-  `aws s3 cp index.html s3://your-panda-name.devopsplayground.co.uk/index.html`, replacing the s3 value with the value output by Terraform.
+  `aws s3 cp index.html s3://your-panda-name.devopsplayground.org/index.html`, replacing the s3 value with the value output by Terraform.
 
   You can now open the website endpoint listed in the outputs in your browser, and you should see the web page you just created.
 

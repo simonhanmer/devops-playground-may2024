@@ -8,7 +8,7 @@ variable "aws_region" {
 variable "domain" {
   type        = string
   description = "The domain name to use for the application"
-  default     = "devopsplayground.co.uk"
+  default     = "devopsplayground.org"
 }
 
 

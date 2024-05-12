@@ -61,7 +61,7 @@ resource "aws_s3_bucket_policy" "this" {
 
 This policy allows the CloudFront distribution to access the bucket, but denies access to anyone else.
 
-Finally, we want to remove the settings that made the S3 bucket public. Find this text in the `s3.tf` file:
+Then, we want to remove the settings that made the S3 bucket public. Find this text in the `s3.tf` file:
 
 ```hcl
 resource "aws_s3_bucket_public_access_block" "this" {
@@ -85,7 +85,7 @@ resource "aws_s3_bucket_public_access_block" "this" {
 }
 ```
 
-Next, we're going to change the CloudFront distribution to use Origin Access Control (OAC) to restrict
+Now, we're going to change the CloudFront distribution to use Origin Access Control (OAC) to restrict
 access to the S3 bucket. This will ensure that only the CloudFront distribution can access the bucket.
 
 First, add this to the `cloudfront.tf` file to create the OAC identity:
@@ -120,3 +120,9 @@ and finally tell CloudFront to use the OAC we created earlier by adding this to 
 ```
 
 With these changes in place, only CloudFront can now access the S3 bucket.
+
+We now have a serverless architecture that securely serves a static website via a custom domain and an SSL certificate.
+
+---
+Please proceed to [step_6](../step_6/README/md) where we will start learning about Hugo or
+back to the main [README](../../README.md) file
