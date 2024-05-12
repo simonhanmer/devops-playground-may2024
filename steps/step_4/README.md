@@ -62,8 +62,53 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
 }
-    ```
+```
+You can find this code in (cloudfront.tf)[./cloudfront.tf].
+
+Let's walk through this CloudFront configuration.
+1. First, we'll enabled the distribution, add a comment to make it clearer to identift and define the default root object that will be returned if a user requests the root of the site.
+2. We'll add an alias to the distribution, which is the URL we want to use to access the site.
+3. We'll set the price class to `PriceClass_100`, which is the cheapest option. Price Classes are used to define which AWS
+regions will be used to cache informations. If a user is in a different geographic region, the CDN will fetch the content from the nearest region.
+4. We'll define the origin of the distribution, which is the S3 bucket we created earlier. We'll set the origin protocol policy to `http-only`, which means that the CDN will only fetch content from the S3 bucket using HTTP.
+5. We'll define the viewer certificate, which is the certificate we created in (step 3)[../step_3/README.md]. We'll set the SSL support method to `sni-only`, which means that the CDN will only support HTTPS using Server Name Indication (SNI).
+6. We'll define the restrictions for the distribution. In this case, we're not restricting access to any geographic regions.
+7. We'll define the default cache behavior for the distribution. We'll allow `GET`, `HEAD`, and `OPTIONS` methods, and we'll cache `GET` and `HEAD` methods. We'll set the viewer protocol policy to `redirect-to-https`, which means that the CDN will redirect users to HTTPS if they try to access the site using HTTP.
+
+If we deployed this alone, we'd have a cloudfront distribution but it would be served from a URL in the `cloudfront.net` domain. However, we want to serve our site from our own domain, so we'll need to add a DNS record to point our domain to the CloudFront distribution.
+
+Add the following to your `cloudfront.tf` file:
+  
+  ```hcl
+ resource "aws_route53_record" "cloudfront_alias" {
+  zone_id = data.aws_route53_zone.this.zone_id
+  name    = local.url
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.this.domain_name
+    zone_id                = aws_cloudfront_distribution.this.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+```
+
+This code creates a Route 53 record that points our domain to the CloudFront distribution. The `alias` block is used to create an alias record, which is a Route 53 feature that allows us to point a domain to a CloudFront distribution.
+
+
+
+At this point, if we deploy our terraform, we'll have a CloudFront distribution that serves our site from our own domain - please be aware it might take a short while for the DNS to propagate, but you should be able to access your site via the domain you've defined. If you try to access via a `http` connection, you should be redirected to `https`.
+
+Finally, let's add an entry to our `outputs.tf` file to output the CloudFront distribution id as we'll need this later. Add these following lines:
+
+```hcl
+output "cloudfront_distribution_id" {
+  value = aws_cloudfront_distribution.this.id
+}
+
+```hcl
 
 ---
-Now, please proceed to [step 5](../step_5/README.md), or
+If you want to secure our S3 bucket, please proceed to [step 5](../step_5/README.md), 
+head to [step_6](../step_6/README/md) to start learning about Hugo or
 back to the main [README](../../README.md) file
