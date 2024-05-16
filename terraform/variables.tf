@@ -15,7 +15,6 @@ variable "domain" {
 variable "panda_name" {
   type        = string
   description = "The name of your panda"
-  default     = "strange-panda"
 }
 
 
