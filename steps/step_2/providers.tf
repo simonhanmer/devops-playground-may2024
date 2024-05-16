@@ -18,3 +18,15 @@ provider "aws" {
     }
   }
 }
+
+provider "aws" {
+  region = "us-east-1"
+
+  default_tags {
+    tags = {
+      project = "devops-playground-may-2024"
+    }
+  }
+
+  alias = "us-east-1"
+}

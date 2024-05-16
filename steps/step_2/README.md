@@ -66,9 +66,23 @@ provider "aws" {
     }
   }
 }
+
+provider "aws" {
+  region = "us-east-1"
+
+  default_tags {
+    tags = {
+      project = "devops-playground-may-2024"
+    }
+  }
+
+  alias = "us-east-1"
+}
+
 ```
 We'll provide a copy of each file in the appropriate step folder, in this case [providers.tf](./providers.tf). This file tells Terraform that we'll be
-deploying to AWS, specifies our version and region preferences, and sets a default tag for all resources we create.
+deploying to AWS, specifies our version and region preferences, and sets a default tag for all resources we create. We'll also need to deploy to
+an additional region in a later step, so we've created an alias to allow us to do that.
 
 ## Create a bucket file
 Next, we need to create a file to hold our S3 bucket. We'll call this file `s3.tf`. First, let's create the bucket:
@@ -140,77 +154,6 @@ output "bucket_s3_name" {
 }
 ```
 This file will output the website endpoint and the S3 bucket name.
-
-## Deploying our terraform
-We've now got our starting terraform files, so we can get ready to deploy them.
-
-First, let's initialise our project - this will download the required providers, that will let Terraform deploy to AWS.
-The command we will need is `terraform init`. For those who know Terraform, we're going to store our state file
-locally, although in a real-world scenario you'd want to store this remotely.
-
-The output should look something like this:
-
-```
-Initializing the backend...
-
-Initializing provider plugins...
-- Finding hashicorp/aws versions matching "~> 5.31"...
-- Installing hashicorp/aws v5.48.0...
-- Installed hashicorp/aws v5.48.0 (signed by HashiCorp)
-
-Terraform has created a lock file .terraform.lock.hcl to record the provider
-selections it made above. Include this file in your version control repository
-so that Terraform can guarantee to make the same selections by default when
-you run "terraform init" in the future.
-
-Terraform has been successfully initialized!
-
-You may now begin working with Terraform. Try running "terraform plan" to see
-any changes that are required for your infrastructure. All Terraform commands
-should now work.
-
-If you ever set or change modules or backend configuration for Terraform,
-rerun this command to reinitialize your working directory. If you forget, other
-commands will detect it and remind you to do so if necessary.
-```
-
-:warning: If this or any following commands doesn't work, and you're in the live session, please ask for help. If you're doing this at home, please check the Terraform documentation.
-
-
-Now that we've initialised our project, we can check our code is valid Terraform. We can do this by running `terraform validate`. This should output `Success! The configuration is valid`. 
-
-Finally, we can deploy our infrastructure by running `terraform apply`. If you just run `terraform apply`, it is going to ask you to enter the name of your panda 
-role - this is because while we have a variable for it, we haven't set a default value. You can either enter a name, or you can set a default value in your 
-`variables.tf` file.
-```hcl
-panda_name = "your-panda-name"
-```
-
-When we run `terraform apply`, Terraform will show us a plan of what it's going to do. If you didn't provide a default panda name in the `variables.tf` file, you'll be asked to input this, 
-otherwise if you're happy with the plan, you can type `yes` and Terraform will deploy your infrastructure. As the end of the deployment, it will show us the outputs we defined in the
-`outputs.tf` file, specifically the website endpoint and the S3 bucket name.
-
-
-## Create an example web page
-Now that we've deployed our infrastructure, we can create a simple web page to test it. Create a file called `index.html` with the following content:
-```html
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>DevOps Playground</title>
-  </head>
-  <body>
-    <h1>Welcome to the DevOps Playground</h1>
-    <p>This is a test page for our DevOps Playground</p>
-  </body>
-</html>
-  ```
-
-  Let's copy that to our S3 bucket. We can do this by running the following command:
-  `aws s3 cp index.html s3://your-panda-name-blog.devopsplayground.org/index.html`, replacing the s3 value with the value output by Terraform
-  (or replace your-panda-name in the command, but keep the -blog )
-
-  You can now open the website endpoint listed in the outputs in your browser, and you should see the web page you just created.
 
 ---
 Now, please proceed to [step 3](../step_3/README.md), or
