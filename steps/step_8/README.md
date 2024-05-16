@@ -55,7 +55,7 @@ list of the options, run `hugo server -h`.
 
 For now, let's start the server - if you're running the workshop independently, you could use `hugo server`,
 but since we're in a hosted environment, we need a few more options, so use 
-`hugo server --bind '0.0.0.0' --baseURL 'http://panda-simon.devopsplayground.org`, remembering to update
+`hugo server --bind '0.0.0.0' --baseURL 'http://panda-simon.devopsplayground.org'`, remembering to update
 the url with your personal panda name. This tells hugo to share content on a public ip via our hosted environment
 url. This will output something similar to 
 ```

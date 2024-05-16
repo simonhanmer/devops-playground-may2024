@@ -116,7 +116,7 @@ Then, remove or comment out these lines from the `cloudfront.tf` file:
 and finally tell CloudFront to use the OAC we created earlier by adding this to the `cloudfront.tf` file under the `origin_id` definition:
 
 ```hcl
-    origin_access_identity = aws_cloudfront_origin_access_control.this.iam_arn
+    origin_access_control_id = aws_cloudfront_origin_access_control.this.id
 ```
 
 With these changes in place, only CloudFront can now access the S3 bucket.

@@ -27,7 +27,6 @@ variable "domain" {
 variable "panda_name" {
   type        = string
   description = "The name of your panda"
-  default     = "strange-panda"
 }
 
 
@@ -186,7 +185,9 @@ role - this is because while we have a variable for it, we haven't set a default
 panda_name = "your-panda-name"
 ```
 
-When we run `terraform apply`, Terraform will show us a plan of what it's going to do. If you're happy with the plan, you can type `yes` and Terraform will deploy your infrastructure. As the end of the deployment, it will show us the outputs we defined in the `outputs.tf` file, specifically the website endpoint and the S3 bucket name.
+When we run `terraform apply`, Terraform will show us a plan of what it's going to do. If you didn't provide a default panda name in the `variables.tf` file, you'll be asked to input this, 
+otherwise if you're happy with the plan, you can type `yes` and Terraform will deploy your infrastructure. As the end of the deployment, it will show us the outputs we defined in the
+`outputs.tf` file, specifically the website endpoint and the S3 bucket name.
 
 
 ## Create an example web page
@@ -205,7 +206,8 @@ Now that we've deployed our infrastructure, we can create a simple web page to t
   ```
 
   Let's copy that to our S3 bucket. We can do this by running the following command:
-  `aws s3 cp index.html s3://your-panda-name-blog.devopsplayground.org/index.html`, replacing the s3 value with the value output by Terraform.
+  `aws s3 cp index.html s3://your-panda-name-blog.devopsplayground.org/index.html`, replacing the s3 value with the value output by Terraform
+  (or replace your-panda-name in the command, but keep the -blog )
 
   You can now open the website endpoint listed in the outputs in your browser, and you should see the web page you just created.
 
