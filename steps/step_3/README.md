@@ -37,26 +37,10 @@ which created a hosted zone for us. We'll use this hosted zone to automatically 
 
 ## Creating a certificate in ACM
 We're going to create a certifcate in ACM using Terraform. Because we're going to add this to a CloudFront distribution,
-this needs to exist in the `us-east-1` region. However, our Terraform provider already has a region (depending on when you
-walk through the workshop, it's likely to be pointing to `eu-west-1` or `eu-west-2`.)
+this needs to exist in the `us-east-1` region. Luckily, we've already setup an alias to allow this in our 
+`providers.tf` file.
 
-To do this, we'll add a new provider to our Terraform, pointing to `us-east-1`, and then add an alias so we can reference
-the 2nd region. Add the following code to your `provider.tf` file:
-```hcl
-provider "aws" {
-  region = "us-east-1"
-
-  default_tags {
-    tags = {
-      project = "devops-playground-may-2024"
-    }
-  }
-
-  alias = "us-east-1"
-}
-```
-
-We can then reference this alias as we create a certificate in ACM. To do this, we need to provide the url we want to secure. 
+To create our certificate, we need to provide the url we want to secure. 
 Create a file called `acm.tf` in your terraform folder, and add the following code:
 ```hcl
 resource "aws_acm_certificate" "this" {
