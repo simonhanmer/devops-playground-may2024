@@ -3,3 +3,5 @@
 *tfvars
 *hcl
 *.txt
+hugo-blog/
+.DS_Store
