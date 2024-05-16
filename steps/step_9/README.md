@@ -14,9 +14,6 @@ these commands
 ```
 git submodule add https://github.com/onweru/compose themes/compose
 git submodule add https://github.com/coolapso/hugo-theme-hello-4s3ti themes/hello
-git submodule add https://gitlab.com/writeonlyhugo/writeonlyhugo-theme themes/writeonly
-git submodule add https://github.com/halogenica/beautifulhugo themes/beautiful
-git submodule add https://github.com/Lednerb/bilberry-hugo-theme themes/bilberry
 git submodule add https://github.com/Vimux/Mainroad themes/mainroad
 git submodule update
 ```
@@ -50,7 +47,29 @@ Let's start by adding a menu across the top of our pages. Add this text to the `
     weight = 20
     url = "https://devopsplayground.co.uk/"
 
+  [[menu.main]]
+    name = "About Me"
+    weight = 30
+    url = "/about-me/"  
+
 ```
+
+
+The last item we added is pointing at a static page to show some content about us. Let's create
+a page at `content/about-me/index.md`. You might see that this isn't under `content/posts` and so
+it's treated as a static page.
+
+In `content/about-me/index.md`, let's add this text:
+```
++++
+title = 'About Me'
+date = 2024-05-16T10:00:01Z
+draft = true
++++
+This is my about me page
+```
+
+If we look at our page, we can see an `About Me` tab and we can access that.
 
 Now let's add a custom logo. Let's grab a copy of the panda logo with this command
 `wget -O static/logo.png https://avatars.githubusercontent.com/u/16601121?s=50`
@@ -88,9 +107,6 @@ file:
   bitbucket = "username"
   email = "example@example.com"
 ```
-
-
-
 
 ---
 Please proceed to [step_10](../step_10/README.md) where we'll look at deploying our site or
