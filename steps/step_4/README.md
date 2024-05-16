@@ -115,5 +115,5 @@ output "cloudfront_distribution_id" {
 
 ---
 If you want to secure our S3 bucket, please proceed to [step 5](../step_5/README.md), 
-head to [step_6](../step_6/README/md) to start learning about Hugo or
+head to [step_6](../step_6/README.md) to start learning about Hugo or
 back to the main [README](../../README.md) file

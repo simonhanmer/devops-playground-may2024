@@ -21,5 +21,5 @@ variable "panda_name" {
 # ----------------------------------------------------------------------------
 # Locals below are used to create the URL for the application
 locals {
-  url = "${var.panda_name}.${var.domain}"
+  url = "${var.panda_name}-blog.${var.domain}"
 }

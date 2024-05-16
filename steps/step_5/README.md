@@ -124,5 +124,5 @@ With these changes in place, only CloudFront can now access the S3 bucket.
 We now have a serverless architecture that securely serves a static website via a custom domain and an SSL certificate.
 
 ---
-Please proceed to [step_6](../step_6/README/md) where we will start learning about Hugo or
+Please proceed to [step_6](../step_6/README.md) where we will start learning about Hugo or
 back to the main [README](../../README.md) file

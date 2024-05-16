@@ -25,14 +25,9 @@ Since it's just HTML, it also tends to load very fast.
 Installing Hugo is fairly straightfoward, and it can run on Windows, OSX or Linux - more details can be found at 
 the [installation page](https://gohugo.io/installation/).
 
-For today's workshop, we're going to work with Linux. For those working through the workshop on their own,
-the latest releases can be found [here](https://github.com/gohugoio/hugo/releases/latest). If you're using the 
-workshop servers, we've already downloaded it and you can find it in the 
-
-``` bash 
-$ wget https://github.com/gohugoio/hugo/releases/download/v0.126.1/hugo_0.126.1_linux-amd64.tar.gz
+For those using our workshop servers, to save time we've pre-installed hugo.
 
 
 ---
-Please proceed to [step_7](../step_6/README/md) where we'll see Hugo in action or
+Please proceed to [step_7](../step_7/README.md) where we'll see Hugo in action or
 back to the main [README](../../README.md) file

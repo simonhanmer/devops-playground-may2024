@@ -3,7 +3,8 @@
 The first thing we need to use to host our website, is storage to hold the pages that we will be serving. In this step, we will create an S3 bucket to hold our website.
 
 We'll suggest names you could use for each file, but since it's Terraform you could place it all in a single file, or use your own naming convention. Just remember,
-Terraform expects your files to end with a `.tf`. Likewise, we suggest placing the files in a folder called `terraform`, but you can place them wherever you like.
+Terraform expects your files to end with a `.tf`. Likewise, we suggest placing the files in a folder called `terraform`; if you're using the live
+workshop infrastructure do this in the workdir folder, but you can place them wherever you like.
 
 ## Create a variables file
 We'll start by creating a file to hold our variables. We'll call this file `variables.tf`. This file will contain the following:
@@ -33,7 +34,7 @@ variable "panda_name" {
 # ----------------------------------------------------------------------------
 # Locals below are used to create the URL for the application
 locals {
-  url = "${var.panda_name}.${var.domain}"
+  url = "${var.panda_name}-blog.${var.domain}"
 }
 
 ```
