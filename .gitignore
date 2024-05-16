@@ -3,6 +3,5 @@
 *tfvars
 *hcl
 *.txt
-terraform/
 hugo-blog/
 .DS_Store
