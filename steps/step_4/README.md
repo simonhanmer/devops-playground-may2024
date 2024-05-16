@@ -99,9 +99,14 @@ This code creates a Route 53 record that points our domain to the CloudFront dis
 
 At this point, if we deploy our terraform, we'll have a CloudFront distribution that serves our site from our own domain - please be aware it might take a short while for the DNS to propagate, but you should be able to access your site via the domain you've defined. If you try to access via a `http` connection, you should be redirected to `https`.
 
-Finally, let's add an entry to our `outputs.tf` file to output the CloudFront distribution id as we'll need this later. Add these following lines:
+Finally, let's add two entries to our `outputs.tf` file to output the website url, and the CloudFront distribution id as we'll need this later. Add these following lines:
 
 ```hcl
+
+output "website_url" {
+  value = "https://${local.url}"
+}
+
 output "cloudfront_distribution_id" {
   value = aws_cloudfront_distribution.this.id
 }
