@@ -1,43 +1,38 @@
-# Let's look at Hugo
+# Getting started with Hugo
+Now we have our infrastructure ready and have somewhere to host a website, let's look at how
+we can create our site.
 
-## What is Hugo?
-Hugo is a static site generator written in Go. It is optimized for speed, easy use, and flexibility. 
-Hugo takes a directory with content and templates and renders them into a full HTML website.
+We could of course, do it retro-style and hand-code our HTML, but that means knowing enough HTML to create something useful.
+Alternatively, if you've ever worked with code in a Git repo, there's a good chance you've created a README file 
+using [MarkDown](https://www.markdownguide.org/) which lets us create pages without having to remember how
+to structure documents, and can concentrate on writing our content.
 
-While Hugo is a great tool for creating static websites, it is not the only one. Other popular static site 
-generators include Jekyll, Gatsby, and Next.js.
+But before, we dig into the details, let's look at [Hugo](https://gohugo.io). Some big names use Hugo to host some of their 
+sites such as:
+* kubernetes.io
+* docker.com
+* Apache.org
+* 1Password Support
+* Let's Encrypt etc.
 
-# Installing Hugo
-For this workshop, we've pre-installed Hugo to save some time - however installation is straightforward.
-If you need to install this yourself, you can find instructions on the [Hugo website](https://gohugo.io/installation/).
+With Hugo, the content is created offline, converted to HTML and then uploaded to simple infrastructure. This means 
+Hugo-based sites can run without the need for powerful servers, databases, loadbalancers, and so no need to maintain
+all of those things. 
 
-# Getting Started
-Firstly, let's use Hugo to create an initial configuration. To do this, run the following commands in the provided wetty
-terminal:
+Since it's just HTML, it also tends to load very fast.
 
-```bash
-$ cd
-$ hugo new site hugo-blog
-$ cd hugo-blog
-$ git init
-$ git submodule add https://github.com/Vimux/blank themes/blank
-$ echo "theme = 'blank'" >> hugo.toml
-```
+## Installing Hugo
+Installing Hugo is fairly straightfoward, and it can run on Windows, OSX or Linux - more details can be found at 
+the [installation page](https://gohugo.io/installation/).
 
-Let's look at what we've done here.
-1. make sure we're in our home folder
-1. asked hugo to create a new, empty site for us in a folder called `hugo-blog`
-1. changed into the new folder and initialised it as a git repository
-1. Added a hugo theme called `blank` as a git sub-module
-1. Told hugo to use the theme `blank` by default
+For today's workshop, we're going to work with Linux. For those working through the workshop on their own,
+the latest releases can be found [here](https://github.com/gohugoio/hugo/releases/latest). If you're using the 
+workshop servers, we've already downloaded it and you can find it in the 
 
-When hugo created the site, it will have created a number of folders such as
-* assets - this will be used to hold any static content we might want, such as css, or maybe a banner image.
-* content - this is where our blog content will go. It will be sub-divided into posts, videos etc.
-* layout - we can use this to modify how our content is viewed, any shortcuts we might want to add
-* static - this is where our blog code will live as it's generated
-* themes - a set of folders holding different visual themes - by default we've installed one called `blank`
+``` bash 
+$ wget https://github.com/gohugoio/hugo/releases/download/v0.126.1/hugo_0.126.1_linux-amd64.tar.gz
 
-### Let's create our first page
 
-Making sure we're in the `hugo-blog` folder, run the command `hugo new content posts/my-first-post.md`. This will create the a dummy page called `my-first-post.md`, which we can see if we run the command `ls content/posts`.
+---
+Please proceed to [step_7](../step_6/README/md) where we'll see Hugo in action or
+back to the main [README](../../README.md) file

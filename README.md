@@ -34,13 +34,26 @@ Walking you through today's workshop is [Simon Hanmer](https://www.linkedin.com/
 
 If you're joining us live, please proceed to [step 1a](./steps/step_1a/README.md), otherwise [step 1b](./steps/step_1b/README.md).
 
-The workshop consists of the following steps:
+The workshop is split into three parts as below
 
-1. Setups
-    a. [step_1a](./steps/step_1a/) - for those joining us live
-    a. [step_1b](./steps/step_1b/) - for those trying this at their own pace
-2. [step_2](./steps/step_2/) - Create a Terraform project, and deploy storage for our site
-3. [step_3](./steps/step_3/) - Generating an SSL certificate to make our site secure
-4. [step_4](./steps/step_4/) - Create a CloudFront distribution to share our site with the world
+* Setups
+
+    1. [step_1a](./steps/step_1a/) - for those joining us live
+    1. [step_1b](./steps/step_1b/) - for those trying this at their own pace
+* Terraform
+
+    3. [step_2](./steps/step_2/) - Create a Terraform project, and deploy storage for our site
+    3. [step_3](./steps/step_3/) - Generating an SSL certificate to make our site secure
+    3. [step_4](./steps/step_4/) - Create a CloudFront distribution to share our site with the world
+    3. [step_5](./steps/step_5) - secure our distribution (***optional***)
+* Hugo
+
+    6. [step_6](./steps/step_6) - Getting started with Hugo
+    6. [step_7](./steps/step_7) - Creating a site
+    6. [step_8](./steps/step_8) - Creating our first pages
+    6. [step_9](./steps/step_9) - Working with themes
+    6. [step_10](./steps/step_10) - Bringing it all together
+
+
 
 Each step contains a README.md file that will guide you through the process, along with the Terraform files you'll need to complete the step.
