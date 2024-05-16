@@ -8,6 +8,7 @@ $ cd hugo-blog
 $ git init
 $ git submodule add https://github.com/Vimux/blank themes/blank
 $ echo "theme = 'blank'" >> hugo.toml
+$ echo 'uglyURLs = true' >> hugo.toml
 ```
 
 Let's look at what we've done here.
