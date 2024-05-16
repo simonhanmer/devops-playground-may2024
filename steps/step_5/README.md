@@ -1,128 +1,33 @@
-# Securing our Bucket
+# Getting started with Hugo
+Now we have our infrastructure ready and have somewhere to host a website, let's look at how
+we can create our site.
 
-Technically, we now have all of the infrastructure configuration we need to deliver our website via
-a custom domain. However, there is one more thing we should do to secure our S3 bucket - often a must
-if you're working in a professional environment.
+We could of course, do it retro-style and hand-code our HTML, but that means knowing enough HTML to create something useful.
+Alternatively, if you've ever worked with code in a Git repo, there's a good chance you've created a README file 
+using [MarkDown](https://www.markdownguide.org/) which lets us create pages without having to remember how
+to structure documents, and can concentrate on writing our content.
 
-Currently we can bypass the CloudFront distribution and access the S3 bucket directly. This is not
-ideal, as it means that we're not taking advantage of the security features that CloudFront provides.
-To fix this, we're going to update the bucket policy to only allow access from the CloudFront
-distribution.
+But before, we dig into the details, let's look at [Hugo](https://gohugo.io). Some big names use Hugo to host some of their 
+sites such as:
+* kubernetes.io
+* docker.com
+* Apache.org
+* 1Password Support
+* Let's Encrypt etc.
 
-Let's update our `s3.tf` file and modify the bucket policy to one that restricts access to the CloudFront
-distribution:
+With Hugo, the content is created offline, converted to HTML and then uploaded to simple infrastructure. This means 
+Hugo-based sites can run without the need for powerful servers, databases, loadbalancers, and so no need to maintain
+all of those things. 
 
-Find this text in the `s3.tf` file:
+Since it's just HTML, it also tends to load very fast.
 
-```hcl
-resource "aws_s3_bucket_policy" "this" {
-  bucket = aws_s3_bucket.this.id
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect    = "Allow",
-        Principal = "*",
-        Action    = "s3:GetObject",
-        Resource  = "${aws_s3_bucket.this.arn}/*"
-      }
-    ]
-  })
-  depends_on = [aws_s3_bucket_public_access_block.this]
-}
-```
+## Installing Hugo
+Installing Hugo is fairly straightfoward, and it can run on Windows, OSX or Linux - more details can be found at 
+the [installation page](https://gohugo.io/installation/).
 
-and replace it with this:
+For those using our workshop servers, to save time we've pre-installed hugo.
 
-```hcl
-resource "aws_s3_bucket_policy" "this" {
-  bucket = aws_s3_bucket.this.id
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect    = "Allow",
-        Principal = {
-            "Service": "cloudfront.amazonaws.com"
-        },
-        Action    = "s3:GetObject",
-        Resource  = "${aws_s3_bucket.this.arn}/*",
-        Condition = {
-            "StringLike": {
-                "AWS:SourceARN": aws_cloudfront_distribution.this.arn
-            }
-        }
-      }
-    ]
-  })
-  depends_on = [aws_s3_bucket_public_access_block.this]
-}
-```
-
-This policy allows the CloudFront distribution to access the bucket, but denies access to anyone else.
-
-Then, we want to remove the settings that made the S3 bucket public. Find this text in the `s3.tf` file:
-
-```hcl
-resource "aws_s3_bucket_public_access_block" "this" {
-  bucket                  = aws_s3_bucket.this.id
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
-}
-```
-
-and change it to this:
-
-```hcl
-resource "aws_s3_bucket_public_access_block" "this" {
-  bucket                  = aws_s3_bucket.this.id
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
-}
-```
-
-Now, we're going to change the CloudFront distribution to use Origin Access Control (OAC) to restrict
-access to the S3 bucket. This will ensure that only the CloudFront distribution can access the bucket.
-
-First, add this to the `cloudfront.tf` file to create the OAC identity:
-
-```hcl
-resource "aws_cloudfront_origin_access_control" "this" {
-  name                              = "oac for ${var.panda_name}"
-  description                       = ""
-  origin_access_control_origin_type = "s3"
-  signing_behavior                  = "always"
-  signing_protocol                  = "sigv4"
-}
-```
-
-Next find each occurence of `aws_s3_bucket_website_configuration.this.website_endpoint` and change it to `aws_s3_bucket.this.bucket_regional_domain_name`.
-
-Then, remove or comment out these lines from the `cloudfront.tf` file:
-
-```hcl
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "http-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
-    }
-```
-
-and finally tell CloudFront to use the OAC we created earlier by adding this to the `cloudfront.tf` file under the `origin_id` definition:
-
-```hcl
-    origin_access_identity = aws_cloudfront_origin_access_control.this.iam_arn
-```
-
-With these changes in place, only CloudFront can now access the S3 bucket.
-
-We now have a serverless architecture that securely serves a static website via a custom domain and an SSL certificate.
 
 ---
-Please proceed to [step_6](../step_6/README.md) where we will start learning about Hugo or
+Please proceed to [step_6](../step_6/README.md) where we'll see Hugo in action or
 back to the main [README](../../README.md) file

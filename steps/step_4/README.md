@@ -10,9 +10,17 @@ In our scenario, we'll use the CDN to provide HTTPS, which is more secure than H
 3. **Cost** - CDNs can cache our content, which means that not all requests go to our S3 bucket, which can reduce costs.
 
 ## Create a CloudFront distribution
-Let's get started creating a CloudFront distribution to deliver our content. We'll create a file called `cloudfront.tf` to hold the configuration:
+Let's get started creating a CloudFront access control and distribution to deliver our content. We'll create a file called `cloudfront.tf` to hold the configuration:
 
 ```hcl
+resource "aws_cloudfront_origin_access_control" "this" {
+  name                              = "oac for ${var.panda_name}"
+  description                       = ""
+  origin_access_control_origin_type = "s3"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
+}
+
 resource "aws_cloudfront_distribution" "this" {
   enabled             = true
   comment             = "CDN for ${var.panda_name}"
@@ -23,15 +31,9 @@ resource "aws_cloudfront_distribution" "this" {
   price_class = "PriceClass_100"
 
   origin {
-    domain_name = aws_s3_bucket_website_configuration.this.website_endpoint
-    origin_id   = aws_s3_bucket_website_configuration.this.website_endpoint
-
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "http-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
-    }
+    domain_name = aws_s3_bucket.this.bucket_regional_domain_name
+    origin_id   = aws_s3_bucket.this.bucket_regional_domain_name
+    origin_access_control_id = aws_cloudfront_origin_access_control.this.id
   }
 
   viewer_certificate {
@@ -50,7 +52,7 @@ resource "aws_cloudfront_distribution" "this" {
     allowed_methods        = ["GET", "HEAD", "OPTIONS"]
     cached_methods         = ["GET", "HEAD"]
     viewer_protocol_policy = "redirect-to-https"
-    target_origin_id       = aws_s3_bucket_website_configuration.this.website_endpoint
+    target_origin_id       = aws_s3_bucket.this.bucket_regional_domain_name
 
     forwarded_values {
       query_string = true
@@ -114,6 +116,5 @@ output "cloudfront_distribution_id" {
 ```hcl
 
 ---
-If you want to secure our S3 bucket, please proceed to [step 5](../step_5/README.md), 
-head to [step_6](../step_6/README.md) to start learning about Hugo or
+Now we've built our infrastructure, lets learn about Hugo [step 5](../step_5/README.md), or
 back to the main [README](../../README.md) file

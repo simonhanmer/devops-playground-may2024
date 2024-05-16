@@ -1,3 +1,11 @@
+resource "aws_cloudfront_origin_access_control" "this" {
+  name                              = "oac for ${var.panda_name}"
+  description                       = ""
+  origin_access_control_origin_type = "s3"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
+}
+
 resource "aws_cloudfront_distribution" "this" {
   enabled             = true
   comment             = "CDN for ${var.panda_name}"
@@ -8,15 +16,16 @@ resource "aws_cloudfront_distribution" "this" {
   price_class = "PriceClass_100"
 
   origin {
-    domain_name = aws_s3_bucket_website_configuration.this.website_endpoint
-    origin_id   = aws_s3_bucket_website_configuration.this.website_endpoint
+    domain_name = aws_s3_bucket.this.bucket_regional_domain_name
+    origin_id   = aws_s3_bucket.this.bucket_regional_domain_name
+    origin_access_control_id = aws_cloudfront_origin_access_control.this.id
 
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "http-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
-    }
+    # custom_origin_config {
+    #   http_port              = 80
+    #   https_port             = 443
+    #   origin_protocol_policy = "http-only"
+    #   origin_ssl_protocols   = ["TLSv1.2"]
+    # }
   }
 
   viewer_certificate {
@@ -35,7 +44,7 @@ resource "aws_cloudfront_distribution" "this" {
     allowed_methods        = ["GET", "HEAD", "OPTIONS"]
     cached_methods         = ["GET", "HEAD"]
     viewer_protocol_policy = "redirect-to-https"
-    target_origin_id       = aws_s3_bucket_website_configuration.this.website_endpoint
+    target_origin_id       = aws_s3_bucket.this.bucket_regional_domain_name
 
     forwarded_values {
       query_string = true

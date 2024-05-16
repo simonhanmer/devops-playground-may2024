@@ -1,113 +1,40 @@
-# Working with themes
+# Bringing it all together
+Up to this point, we've been looking at using Hugo locally. But we've built
+out our infrastructure so let's look at how we can generate our site and upload
+it so it's visible to everyone.
 
-So now, we have a working site, but it's not exactly exciting visually.
+To generate our site, rather than running `hugo server`, we can run `hugo`
+and that will generate a static version of our site in the `public` folder.
 
-However, one of the great things about Hugo is that we can concentrate on our content, 
-and not have to manage it's visual aspect - but we can manage that through themes.
-You can create your own theme, but there's also a catalog of themes already created at
-https://themes.gohugo.io.
-
-Let's grab a couple of themes and try switching between them to see how they change 
-our site. In our bash session, let's make sure we're in the `hugo-blog` folder and run 
-these commands 
-
-```
-git submodule add https://github.com/onweru/compose themes/compose
-git submodule add https://github.com/coolapso/hugo-theme-hello-4s3ti themes/hello
-git submodule add https://github.com/Vimux/Mainroad themes/mainroad
-git submodule update
-```
-
-If we now edit the `hugo.toml` file, we can change the value in the `themes` field to
-use the different themes, and if we have the local server running, you can see your
-site change visually.
-
-For some of these themes, they might add extra pages such as an `about-me` or `contact`. They
-may also bring along additional functionality, or configuration options - look at the
-theme documentation to find one that works for you.
-
-Not only that, but some themes will bring new functionality such as image carousels, sidebars
-and much more.
-
-# Digging into a theme
-Let's use the `mainroad` theme as an example - first make sure you edit your `hugo.toml` file and
-change the theme to use `mainroad.
-
-Let's start by adding a menu across the top of our pages. Add this text to the `hugo.toml`:
+With this content generated, we can copy it to the S3 bucket we created earlier. First,
+let's remind ourselves of the outputs from the terraform we ran. We can do this by
+running the command `terraform output` in the folder where we deployed terraform. In my
+case, this looks something like:
 
 ```
-[menus]
-  [[menu.main]]
-    name = 'Home'
-    pageRef = '/'
-    weight = 10
-
-  [[menu.main]]
-    name = "Playground"
-    weight = 20
-    url = "https://devopsplayground.co.uk/"
-
-  [[menu.main]]
-    name = "About Me"
-    weight = 30
-    url = "/about-me/"  
-
+bucket_s3_name = "s3://funny-panda-blog.devopsplayground.org"
+bucket_website_endpoint = "http://funny-panda-blog.devopsplayground.org.s3.eu-west-2.amazonaws.com"
+cloudfront_distribution_id = "E2JDXT7NL7E5Q7"
+website_url = "https://funny-panda-blog.devopsplayground.org"
 ```
 
+We want to copy all of the content from our `public` folder to the s3 bucket shown in `bucket_s3_name`
+output parameter. To do this, we need to run the command `aws s3 sync public s3://funny-panda-blog.devopsplayground.org`.
 
-The last item we added is pointing at a static page to show some content about us. Let's create
-a page at `content/about-me/index.md`. You might see that this isn't under `content/posts` and so
-it's treated as a static page.
+However, when we do this, we should see something like
 
-In `content/about-me/index.md`, let's add this text:
-```
-+++
-title = 'About Me'
-date = 2024-05-16T10:00:01Z
-draft = true
-+++
-This is my about me page
-```
+![Screenshot](/images/sshot_10_01.png) with the message
+> You don't have any posts yet
 
-If we look at our page, we can see an `About Me` tab and we can access that.
+This is because, as you might remember, the pages we created so far all had a variable in the
+respective frontmatter `draft = true`. We need to remove this on the pages we've created and
+re-generate the contents, then copy this to the s3 bucket again.
 
-Now let's add a custom logo. Let's grab a copy of the panda logo with this command
-`wget -O static/logo.png https://avatars.githubusercontent.com/u/16601121?s=50`
+## Cloudfront Caching
+As we mentioned earlier, CloudFront can perform caching on content. This might mean that
+when you make a change to content and upload it, the change might not appear.
 
-Now we can modify our config to use the new logo by editing the `hugo.toml` file and adding
-this text:
-
-```
-[Params.logo]
-  image = "/logo.png"
-  subtitle = "Just another site"
-```
-
-And if we view the site, we should see the new logo.
-
-With `mainroad` we can also add a sidebar with widgets. Let's enable these to show on
-the home page, and on our content pages. Add this text to the `hugo.toml`
-file:
-
-```
-[Params.sidebar]
-  home = "right"
-  single = "right"
-  widgets = ["recent", "social"]
-
-[Params.widgets.social]
-  # Enable parts of social widget
-  facebook = "username"
-  twitter = "username"
-  instagram = "username"
-  linkedin = "username"
-  telegram = "username"
-  github = "username"
-  gitlab = "username"
-  bitbucket = "username"
-  email = "example@example.com"
-```
-
----
-Please proceed to [step_10](../step_10/README.md) where we'll look at deploying our site or
-back to the main [README](../../README.md) file
+If this occurs, we can clear the cache by checking the outputs from terraform, that
+include a distribution id for CloudFront. We can then use that to clear the cache by
+running the command `aws cloudfront create-invalidation --distribution-id _dist_id_ --paths '/*'`,
+replacing `_dist_id_` with the value from the terraform outputs.

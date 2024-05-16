@@ -27,7 +27,6 @@ variable "domain" {
 variable "panda_name" {
   type        = string
   description = "The name of your panda"
-  default     = "strange-panda"
 }
 
 
@@ -83,14 +82,14 @@ We're going to set the bucket name to the URL of our application. We're also set
 destroy the bucket even if it's not empty. This is useful for our purposes, but be careful when using this in production.
 
 
-Next, we're going to setup some permissions around the bucket. Note that we'll tie these down shortly, but for now we'll just allow all access to the bucket:
+Next, we're going to setup some permissions around the bucket. We'll use these to ensure our bucket is secure:
 ```hcl
 resource "aws_s3_bucket_public_access_block" "this" {
   bucket                  = aws_s3_bucket.this.id
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 resource "aws_s3_bucket_policy" "this" {
@@ -100,16 +99,17 @@ resource "aws_s3_bucket_policy" "this" {
     Statement = [
       {
         Effect    = "Allow",
-        Principal = "*",
+        Principal = {
+            "Service": "cloudfront.amazonaws.com"
+        },
         Action    = "s3:GetObject",
-        Resource  = "${aws_s3_bucket.this.arn}/*"
+        Resource  = "${aws_s3_bucket.this.arn}/*",
       }
     ]
   })
   depends_on = [aws_s3_bucket_public_access_block.this]
 }
 ```
-We're setting up a public access block to allow public access to the bucket. We're also setting up a bucket policy to allow anyone to read objects from the bucket.
 
 Finallly, let's tell AWS that we want this to be a website bucket:
 ```hcl
@@ -186,7 +186,9 @@ role - this is because while we have a variable for it, we haven't set a default
 panda_name = "your-panda-name"
 ```
 
-When we run `terraform apply`, Terraform will show us a plan of what it's going to do. If you're happy with the plan, you can type `yes` and Terraform will deploy your infrastructure. As the end of the deployment, it will show us the outputs we defined in the `outputs.tf` file, specifically the website endpoint and the S3 bucket name.
+When we run `terraform apply`, Terraform will show us a plan of what it's going to do. If you didn't provide a default panda name in the `variables.tf` file, you'll be asked to input this, 
+otherwise if you're happy with the plan, you can type `yes` and Terraform will deploy your infrastructure. As the end of the deployment, it will show us the outputs we defined in the
+`outputs.tf` file, specifically the website endpoint and the S3 bucket name.
 
 
 ## Create an example web page
@@ -205,7 +207,8 @@ Now that we've deployed our infrastructure, we can create a simple web page to t
   ```
 
   Let's copy that to our S3 bucket. We can do this by running the following command:
-  `aws s3 cp index.html s3://your-panda-name-blog.devopsplayground.org/index.html`, replacing the s3 value with the value output by Terraform.
+  `aws s3 cp index.html s3://your-panda-name-blog.devopsplayground.org/index.html`, replacing the s3 value with the value output by Terraform
+  (or replace your-panda-name in the command, but keep the -blog )
 
   You can now open the website endpoint listed in the outputs in your browser, and you should see the web page you just created.
 
