@@ -45,14 +45,14 @@ The workshop is split into three parts as below
     3. [step_2](./steps/step_2/) - Create a Terraform project, and deploy storage for our site
     3. [step_3](./steps/step_3/) - Generating an SSL certificate to make our site secure
     3. [step_4](./steps/step_4/) - Create a CloudFront distribution to share our site with the world
-    3. [step_5](./steps/step_5) - secure our distribution (***optional***)
+
 * Hugo
 
-    6. [step_6](./steps/step_6) - Getting started with Hugo
-    6. [step_7](./steps/step_7) - Creating a site
-    6. [step_8](./steps/step_8) - Creating our first pages
-    6. [step_9](./steps/step_9) - Working with themes
-    6. [step_10](./steps/step_10) - Bringing it all together
+    6. [step_5](./steps/step_5) - Getting started with Hugo
+    6. [step_6](./steps/step_6) - Creating a site
+    6. [step_7](./steps/step_7) - Creating our first pages
+    6. [step_8](./steps/step_8) - Working with themes
+    6. [step_9](./steps/step_9) - Bringing it all together
 
 
 

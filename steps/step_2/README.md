@@ -82,14 +82,14 @@ We're going to set the bucket name to the URL of our application. We're also set
 destroy the bucket even if it's not empty. This is useful for our purposes, but be careful when using this in production.
 
 
-Next, we're going to setup some permissions around the bucket. Note that we'll tie these down shortly, but for now we'll just allow all access to the bucket:
+Next, we're going to setup some permissions around the bucket. We'll use these to ensure our bucket is secure:
 ```hcl
 resource "aws_s3_bucket_public_access_block" "this" {
   bucket                  = aws_s3_bucket.this.id
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 resource "aws_s3_bucket_policy" "this" {
@@ -99,16 +99,17 @@ resource "aws_s3_bucket_policy" "this" {
     Statement = [
       {
         Effect    = "Allow",
-        Principal = "*",
+        Principal = {
+            "Service": "cloudfront.amazonaws.com"
+        },
         Action    = "s3:GetObject",
-        Resource  = "${aws_s3_bucket.this.arn}/*"
+        Resource  = "${aws_s3_bucket.this.arn}/*",
       }
     ]
   })
   depends_on = [aws_s3_bucket_public_access_block.this]
 }
 ```
-We're setting up a public access block to allow public access to the bucket. We're also setting up a bucket policy to allow anyone to read objects from the bucket.
 
 Finallly, let's tell AWS that we want this to be a website bucket:
 ```hcl

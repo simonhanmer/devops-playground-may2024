@@ -1,33 +1,30 @@
-# Getting started with Hugo
-Now we have our infrastructure ready and have somewhere to host a website, let's look at how
-we can create our site.
+# Getting Started
+Firstly, let's use Hugo to create an initial configuration. To do this, run the following commands in the provided wetty
+terminal(if you're using our infrastructure, we suggest you do this in the `workdir` folder):
 
-We could of course, do it retro-style and hand-code our HTML, but that means knowing enough HTML to create something useful.
-Alternatively, if you've ever worked with code in a Git repo, there's a good chance you've created a README file 
-using [MarkDown](https://www.markdownguide.org/) which lets us create pages without having to remember how
-to structure documents, and can concentrate on writing our content.
+```bash
+$ hugo new site hugo-blog
+$ cd hugo-blog
+$ git init
+$ git submodule add https://github.com/Vimux/blank themes/blank
+$ echo "theme = 'blank'" >> hugo.toml
+$ echo 'uglyURLs = true' >> hugo.toml
+```
 
-But before, we dig into the details, let's look at [Hugo](https://gohugo.io). Some big names use Hugo to host some of their 
-sites such as:
-* kubernetes.io
-* docker.com
-* Apache.org
-* 1Password Support
-* Let's Encrypt etc.
+Let's look at what we've done here.
+1. asked hugo to create a new, empty site for us in a folder called `hugo-blog`
+1. changed into the new folder and initialised it as a git repository
+1. Added a hugo theme called `blank` as a git sub-module
+1. Told hugo to use the theme `blank` by default
 
-With Hugo, the content is created offline, converted to HTML and then uploaded to simple infrastructure. This means 
-Hugo-based sites can run without the need for powerful servers, databases, loadbalancers, and so no need to maintain
-all of those things. 
-
-Since it's just HTML, it also tends to load very fast.
-
-## Installing Hugo
-Installing Hugo is fairly straightfoward, and it can run on Windows, OSX or Linux - more details can be found at 
-the [installation page](https://gohugo.io/installation/).
-
-For those using our workshop servers, to save time we've pre-installed hugo.
-
+When hugo created the site, it will have created a number of folders such as
+* assets - this will be used to hold any static content we might want, such as css, or maybe a banner image.
+* content - this is where our blog content will go. It will be sub-divided into posts, videos etc.
+* layout - we can use this to modify how our content is viewed, any shortcuts we might want to add
+* static - this is where our blog code will live as it's generated
+* themes - a set of folders holding different visual themes - by default we've installed one called `blank`
 
 ---
-Please proceed to [step_7](../step_7/README.md) where we'll see Hugo in action or
+Please proceed to [step_7](../step_7/README.md) where we'll create our first page or
 back to the main [README](../../README.md) file
+
