@@ -19,13 +19,6 @@ resource "aws_cloudfront_distribution" "this" {
     domain_name = aws_s3_bucket.this.bucket_regional_domain_name
     origin_id   = aws_s3_bucket.this.bucket_regional_domain_name
     origin_access_control_id = aws_cloudfront_origin_access_control.this.id
-
-    # custom_origin_config {
-    #   http_port              = 80
-    #   https_port             = 443
-    #   origin_protocol_policy = "http-only"
-    #   origin_ssl_protocols   = ["TLSv1.2"]
-    # }
   }
 
   viewer_certificate {
