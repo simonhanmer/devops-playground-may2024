@@ -6,6 +6,8 @@ Welcome to the DevOps Playground for May 2024!
 
 This month we're going to be building a secure, highly available, low-cost blogging platform. We'll use Terraform to build the infrastructure in AWS. 
 
+![infrastructure diagram](/images/infra.png)
+
 Then we'll show you how to use [Hugo](https://gohugo.io/) to create a static website, and deploy it to the infrastructure we've built.
 
 Thanks to GlobalLogic UK&I for sponsoring the DevOps Playground, and to the AWS Community Builder program for providing a surprise we'll share at the end of the workshop.
