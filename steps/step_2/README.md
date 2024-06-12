@@ -1,159 +1,92 @@
-# Step 2 - starting to build our infrastructure
+# Generating an SSL certificate to make our site secure
 
-The first thing we need to use to host our website, is storage to hold the pages that we will be serving. In this step, we will create an S3 bucket to hold our website.
+Now that we've created our terraform project, and deployed an S3 bucket we can use to store our site, 
+we need to ensure that our site can use https which marks our site as secure in a browser.
 
-We'll suggest names you could use for each file, but since it's Terraform you could place it all in a single file, or use your own naming convention. Just remember,
-Terraform expects your files to end with a `.tf`. Likewise, we suggest placing the files in a folder called `terraform`; if you're using the live
-workshop infrastructure do this in the workdir folder, but you can place them wherever you like.
+To do this, we'll use Amazon Certificate Manager (ACM) to create a certificate for our domain. Not
+only will ACM allow us to create and manage a certificate, even renewing automatically when needed, 
+but it's also free!
 
-## Create a variables file
-We'll start by creating a file to hold our variables. We'll call this file `variables.tf`. This file will contain the following:
+## How does ACM verify our certificate.
+Certificates are used to validate the identity of our side, and to ensure that the data we send and
+receive is encrypted. ACM will verify that we own the domain we're requesting a certificate for.
 
+Whilst it is possible to configure ACM to send an email to the domain owner, we're going to use DNS. ACM
+does this by generating a CNAME record to the DNS zone for our domain.
+
+With DNS verification, we have 3 scenarios to consider.
+
+1. We have registered our domain name via Amazon Route 53. This is the easiest scenarion, as it will
+create and configure a hosted zone for us in Route 53, and configure the name servers to point to that zone.
+
+    Route53 Hosted zones are used to hold the DNS entries for a specific domain, and because all of this is
+    handled inside Amazon, we can configure our certificate request to automatically validate itself via DNS.
+
+2. We have registered our domain name via another registrar, but we want to use Route53 to manage our DNS. With
+this approach, we will need to create a hosted zone in Route53, and update the name servers at our registrar to
+point to the Route53 hosted zone. 
+
+    Once, this is configured, as per option 1, we can automatically verify our certificate via DNS.
+3. We have registered our domain name via another registrar, and we want to continue to manage our DNS there.
+Unless you've chosen a DNS registrar that has a Terraform provider, we'll need to manually add the required
+CNAME details to our DNS zone.
+
+## Our approach
+For simplicity, we're going to use option 1 - we've already registered our domain `devopsplayground.org` in Route53,
+which created a hosted zone for us. We'll use this hosted zone to automatically verify our certificate.
+
+## Creating a certificate in ACM
+We're going to create a certifcate in ACM using Terraform. Because we're going to add this to a CloudFront distribution,
+this needs to exist in the `us-east-1` region. Luckily, we've already setup an alias to allow this in our 
+`providers.tf` file.
+
+To create our certificate, we need to provide the url we want to secure. 
+Create a file called `acm.tf` in your terraform folder, and add the following code:
 ```hcl
-variable "aws_region" {
-  type        = string
-  description = "The AWS region to deploy to"
-  default     = "eu-west-2"
-}
-
-
-variable "domain" {
-  type        = string
-  description = "The domain name to use for the application"
-  default     = "devopsplayground.org"
-}
-
-
-variable "panda_name" {
-  type        = string
-  description = "The name of your panda"
-}
-
-
-# ----------------------------------------------------------------------------
-# Locals below are used to create the URL for the application
-locals {
-  url = "${var.panda_name}-blog.${var.domain}"
-}
-
-```
-We'll provide a copy of each file in the appropriate step folder, in this case [variables.tf](./variables.tf). This file tells Terraform about some values that
-we'll be using in our infrastructure. We've defined the region we'll be deploying to, the domain name we'll be using, and the name of our panda. We've also
-defined a local variable to build the URL of our application based on the domain and panda name.
-
-
-## Create a provider file
-We need to tell Terraform that we're going to be deploying to AWS. We do this by creating a provider file -- `providers.tf`. This file will contain the following:
-
-```hcl
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.31"
-    }
-  }
-
-  required_version = "~> 1.2"
-}
-
-provider "aws" {
-  region = var.aws_region
-
-  default_tags {
-    tags = {
-      project = "devops-playground-may-2024"
-    }
+resource "aws_acm_certificate" "this" {
+  provider          = aws.us-east-1
+  domain_name       = local.url
+  validation_method = "DNS"
+  lifecycle {
+    create_before_destroy = true
   }
 }
-
-provider "aws" {
-  region = "us-east-1"
-
-  default_tags {
-    tags = {
-      project = "devops-playground-may-2024"
-    }
-  }
-
-  alias = "us-east-1"
-}
-
 ```
-We'll provide a copy of each file in the appropriate step folder, in this case [providers.tf](./providers.tf). This file tells Terraform that we'll be
-deploying to AWS, specifies our version and region preferences, and sets a default tag for all resources we create. We'll also need to deploy to
-an additional region in a later step, so we've created an alias to allow us to do that.
+this code can be found in [acm.tf](./acm.tf).
 
-## Create a bucket file
-Next, we need to create a file to hold our S3 bucket. We'll call this file `s3.tf`. First, let's create the bucket:
+This will return a terraform set containing the details of the certificate. We can use this to identify the 
+CNAME record we need to add to our DNS zone as we'll see below.
+
+When we deploy this code, it will create a certificate in ACM for our domain, and set the validation method to DNS. 
+It will also return the name and value of the CNAME record we need to add to our DNS zone in a set using the attribute `domain_validation_options`.
+
+## Identify the hosted zone
+As mentioned above, we're using option 1, so our hosted zone is already created. But we'll need to know the host id, as
+we'll need that when we want to create our DNS record for validation.
+
+To do this, we'll query Route53 and find our hosted zone. To do this, add this code to the `acm.tf` file:
 ```hcl
-resource "aws_s3_bucket" "this" {
-  bucket        = local.url
-  force_destroy = true
+data "aws_route53_zone" "this" {
+  name = var.domain
 }
 ```
-We're going to set the bucket name to the URL of our application. We're also setting `force_destroy` to `true`. This means that Terraform will allow us to
-destroy the bucket even if it's not empty. This is useful for our purposes, but be careful when using this in production.
 
-
-Next, we're going to setup some permissions around the bucket. We'll use these to ensure our bucket is secure:
+## Add the CNAME needed for verification
+Finally, we need to add the CNAME record to our hosted zone. Add the following code to the `acm.tf` file:
 ```hcl
-resource "aws_s3_bucket_public_access_block" "this" {
-  bucket                  = aws_s3_bucket.this.id
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
-}
-
-resource "aws_s3_bucket_policy" "this" {
-  bucket = aws_s3_bucket.this.id
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect    = "Allow",
-        Principal = {
-            "Service": "cloudfront.amazonaws.com"
-        },
-        Action    = "s3:GetObject",
-        Resource  = "${aws_s3_bucket.this.arn}/*",
-      }
-    ]
-  })
-  depends_on = [aws_s3_bucket_public_access_block.this]
+resource "aws_route53_record" "this" {
+  zone_id = data.aws_route53_zone.this.zone_id
+  name    = tolist(aws_acm_certificate.this.domain_validation_options)[0].resource_record_name
+  type    = tolist(aws_acm_certificate.this.domain_validation_options)[0].resource_record_type
+  records = [tolist(aws_acm_certificate.this.domain_validation_options)[0].resource_record_value]
+  ttl     = 60
 }
 ```
+It's worthwhile understanding the syntax above - we're using the `tolist` function to convert the set of validation
+options from the certificate we created into a list. We then use the first item in the list to get the name, type and value
+for the DNS entry we need to create.
 
-Finallly, let's tell AWS that we want this to be a website bucket:
-```hcl
-resource "aws_s3_bucket_website_configuration" "this" {
-  bucket = aws_s3_bucket.this.id
-
-  index_document {
-    suffix = "index.html"
-  }
-
-  error_document {
-    key = "error.html"
-  }
-}
-
-```
-You can find a copy of this file in the appropriate step folder, in this case [s3.tf](./s3.tf).
-
-## Outputting some configuration
-To make it easier to see what's going on, we're going to output some information about our infrastructure. We'll create a file called `outputs.tf` to hold this information:
-```hcl
-output "bucket_website_endpoint" {
-  value = "http://${aws_s3_bucket_website_configuration.this.website_endpoint}"
-}
-
-output "bucket_s3_name" {
-  value = "s3://${aws_s3_bucket.this.bucket}"
-}
-```
-This file will output the website endpoint and the S3 bucket name.
+However the records attribute in the route53 record resource expects a list, so we convert the value to a list.
 
 ---
 Now, please proceed to [step 3](../step_3/README.md), or
