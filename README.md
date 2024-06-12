@@ -16,13 +16,7 @@ Walking you through today's workshop is [Simon Hanmer](https://www.linkedin.com/
 
 ## Pre-requisites
 1. Laptop with internet access
-2. For those joining us live, we'll provide you with 
-    * a Panda identity to use for the workshop.
-    * a remote shell session with the following installed
-        * Terraform
-        * AWS CLI along with access to an AWS account
-        * Hugo
-4. If you're following along later, you'll need
+2. If you're following along later, you'll need
     * An AWS account
     * A domain name, preferably with the DNS hosted in AWS Route 53.
     * The following installed on your machine
