@@ -38,14 +38,12 @@ If you're joining us live, please proceed to [step 1a](./steps/step_1a/README.md
 
 The workshop is split into three parts as below
 
-* Setups
-
-    1. [step_1a](./steps/step_1a/) - for those joining us live
-    1. [step_1b](./steps/step_1b/) - for those trying this at their own pace
+* Pre-requisites
+    1. [step_1](./steps/step_1/) - what you'll need
 * Terraform
 
-    3. [step_2](./steps/step_2/) - Create a Terraform project, and deploy storage for our site
-    3. [step_3](./steps/step_3/) - Generating an SSL certificate to make our site secure
+    1. [step_2](./steps/step_2/) - Create a Terraform project, and deploy storage for our site
+    2. [step_3](./steps/step_3/) - Generating an SSL certificate to make our site secure
     3. [step_4](./steps/step_4/) - Create a CloudFront distribution to share our site with the world
 
 * Hugo

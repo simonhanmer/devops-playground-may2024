@@ -150,6 +150,7 @@ commands will detect it and remind you to do so if necessary.
 
 :warning: If this or any following commands doesn't work, and you're in the live session, please ask for help. If you're doing this at home, please check the Terraform documentation.
 
+From this point on, we'll need AWS credentials to be configured - there are a number of pages that describe how to configure this, but try https://spacelift.io/blog/terraform-aws-provider
 
 Now that we've initialised our project, we can check our code is valid Terraform. We can do this by running `terraform validate`. This should output `Success! The configuration is valid`. 
 
